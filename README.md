@@ -50,7 +50,7 @@ Prerequisites
 Ensure you have Python 3.7 or higher installed. You can check your version by running: python --version
 
 Clone the Repository
-Download the project files to your local system: git clone https://github.com/devesh18-design/Smart-Campus-Navigator cd AI-Path-navigator
+Download the project files to your local system: git clone https://github.com/satyamkumar2309/AI-Path-Navigator cd AI-Path-navigator
 
 Install Required Libraries
 This project relies on NetworkX for graph logic and Matplotlib for the GUI. Install them via pip: pip install networkx matplotlib
