@@ -56,7 +56,7 @@ Install Required Libraries
 This project relies on NetworkX for graph logic and Matplotlib for the GUI. Install them via pip: pip install networkx matplotlib
 
 Execute the Script
-Run the main Python file to launch the visual navigator: https://github.com/devesh18-design/Smart-Campus-Navigator/blob/main/Smart%20university%20navigator.py
+Run the main Python file to launch the visual navigator: https://github.com/satyamkumar2309/AI-Path-Navigator/blob/main/AI-Path-Navigator.py/code%20File
 
 Interacting with the OutputThe Map Window: A window titled "AI Path Navigator by Satyam Kumar" will appear.
 
