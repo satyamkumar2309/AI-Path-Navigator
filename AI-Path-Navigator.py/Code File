@@ -1,0 +1,107 @@
+import networkx as nx
+import matplotlib.pyplot as plt
+import math
+
+# 1. Society Landmarks (New Layout Coordinates)
+locations = {
+    'Main_Entrance': (5, 5),
+    'Back_Gate': (100, 60),
+    'Community_Hall': (30, 25),
+    'Meeting_Area': (65, 15),
+    'Club_House': (85, 30),
+    'Market_Area': (25, 55),
+    'Food_Court': (60, 40),
+    'Fitness_Center': (55, 75),
+    'Playground': (75, 90),
+    'Office_Block': (45, 10),
+    'Health_Center': (40, 60),
+
+    # Central admin hub
+    'Society_Office': (30, 75),
+
+    # Residential Towers (clustered at top)
+    'Tower_A': (20, 95),
+    'Tower_B': (10, 85),
+    'Tower_C': (20, 70),
+    'Tower_D': (40, 90)
+}
+
+# Create graph
+G = nx.Graph()
+for node, pos in locations.items():
+    G.add_node(node, pos=pos)
+
+# 2. Paths (unchanged structure)
+paths = [
+    ('Main_Entrance', 'Community_Hall', 400, 'flat'),
+    ('Community_Hall', 'Market_Area', 300, 'flat'),
+    ('Market_Area', 'Society_Office', 140, 'flat'),
+    ('Society_Office', 'Health_Center', 80, 'flat'),
+    ('Health_Center', 'Fitness_Center', 160, 'flat'),
+    ('Office_Block', 'Food_Court', 200, 'flat'),
+    ('Community_Hall', 'Office_Block', 350, 'flat'),
+    ('Food_Court', 'Playground', 600, 'flat'),
+    ('Food_Court', 'Back_Gate', 480, 'flat'),
+    ('Office_Block', 'Meeting_Area', 90, 'stairs'),
+    ('Club_House', 'Back_Gate', 350, 'flat'),
+
+    # Towers
+    ('Society_Office', 'Tower_A', 70, 'stairs'),
+    ('Society_Office', 'Tower_B', 80, 'flat'),
+    ('Society_Office', 'Tower_C', 60, 'flat'),
+    ('Society_Office', 'Tower_D', 90, 'stairs'),
+
+    # Shortcuts
+    ('Tower_A', 'Tower_B', 50, 'flat'),
+    ('Tower_C', 'Market_Area', 70, 'flat'),
+
+    # Utility paths
+    ('Club_House', 'Meeting_Area', 130, 'flat'),
+    ('Club_House', 'Food_Court', 100, 'flat'),
+    ('Meeting_Area', 'Food_Court', 120, 'stairs'),
+    ('Tower_D', 'Fitness_Center', 210, 'flat'),
+    ('Fitness_Center', 'Playground', 90, 'flat'),
+    ('Office_Block', 'Health_Center', 400, 'flat'),
+    ('Fitness_Center', 'Office_Block', 150, 'flat')
+]
+
+# Add edges
+for u, v, w, t in paths:
+    weight = w * 1.5 if t == 'stairs' else w
+    G.add_edge(u, v, weight=weight, type=t)
+
+# 3. Heuristic
+def heuristic_dist(u, v):
+    x1, y1 = locations[u]
+    x2, y2 = locations[v]
+    return math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
+
+# Input
+start_point = input("Enter Start Location: ")
+end_point = input("Enter Destination: ")
+
+# A* path
+path = nx.astar_path(G, start_point, end_point, heuristic=heuristic_dist, weight='weight')
+path_length = nx.astar_path_length(G, start_point, end_point, heuristic=heuristic_dist, weight='weight')
+
+# 4. Visualization
+plt.figure(num="Smart Society Navigation - New Map", figsize=(12, 10))
+pos = nx.get_node_attributes(G, 'pos')
+
+nx.draw_networkx_nodes(G, pos, node_size=1200, node_color='lightgreen')
+nx.draw_networkx_labels(G, pos, font_size=8, font_weight='bold')
+
+flat_edges = [(u, v) for u, v, d in G.edges(data=True) if d['type'] == 'flat']
+stair_edges = [(u, v) for u, v, d in G.edges(data=True) if d['type'] == 'stairs']
+
+nx.draw_networkx_edges(G, pos, edgelist=flat_edges, alpha=0.3, edge_color='black')
+nx.draw_networkx_edges(G, pos, edgelist=stair_edges, alpha=0.6, edge_color='red', style='dashed')
+
+# Highlight path
+path_edges = list(zip(path, path[1:]))
+nx.draw_networkx_nodes(G, pos, nodelist=path, node_color='grey', node_size=1500)
+nx.draw_networkx_edges(G, pos, edgelist=path_edges, edge_color='red', width=4)
+
+plt.title(f"Optimized Route: {start_point} → {end_point}\nDistance: {path_length:.2f} m", fontsize=14)
+plt.axis('off')
+plt.show()
